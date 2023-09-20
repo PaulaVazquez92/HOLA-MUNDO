@@ -2,9 +2,10 @@ Algoritmo SistemaReservasSalonBelleza
     Dimension turnos[20]; // Turnos tomados en la semana
     Dimension diasSemana[7];
     Dimension horarios[2];
-    Dimension productos[10]; // Catálogo de productos y servicios
-    Definir diaElegido, horarioElegido, productoNuevo Como Cadena;
-    Definir opcionMenu, cantTurno, cantidadProductos Como Entero;
+    Dimension servicios[3]; // Catálogo de servicios
+	Dimension precios[3]; // Listado de precios
+    Definir diaElegido, horarioElegido Como Cadena;
+    Definir opcionMenu, cantTurno, cantidadServicios, servicioActualizar Como Entero;
 	Dimension calendario[7,2]; // Estructura de datos para el calendario (7 días x 2 turnos)
 	
 	// Definir días y horarios disponibles
@@ -25,20 +26,19 @@ Algoritmo SistemaReservasSalonBelleza
 		FinPara
 	FinPara
 	
-
+	cantTurno <- 1; // Cantidad de turnos que reserva el usuario
+	
     // Menú principal
     Repetir
         Escribir "¿Qué desea hacer?";
         Escribir "1. Reservar turnos";
-        Escribir "2. Mantener catálogo de productos y servicios";
+        Escribir "2. Listado de precios y servicios";
 		Escribir "3. Ver calendario";
         Escribir "4. Salir";
         Leer opcionMenu;
 		
         // Reservar turnos
         Si (opcionMenu = 1) Entonces
-
-            cantTurno <- 1; // Cantidad de turnos que reserva el usuario
             Repetir
                 Mostrar "Seleccione el día para el turno:";
                 Para i <- 1 Hasta 7 Hacer
@@ -60,7 +60,8 @@ Algoritmo SistemaReservasSalonBelleza
 					// Actualiza el calendario marcando el turno como "Ocupado"
 					calendario[diaElegido,horarioElegido] <- "Ocupado";
                     Mostrar "Turno reservado exitosamente.";
-                SiNo
+					cantTurno <- cantTurno + 1;
+                SiNo // del turno 2 en adelante...
                     Existe <- Falso; // Verdadero si encuentra un turno duplicado
                     Para i <- 1 Hasta cantTurno Hacer
                         Si turnos[i] = turnoElegido Entonces
@@ -71,63 +72,86 @@ Algoritmo SistemaReservasSalonBelleza
                     Si Existe Entonces
                         Mostrar "El turno seleccionado ya está ocupado. Por favor, elija otro.";
                     SiNo
-						// Si no existe un turno duplicado, se almacena en el arreglo turnos
+						// Si NO existe un turno duplicado, se almacena en el arreglo turnos
                         turnos[cantTurno] <- turnoElegido;
 						// Actualiza el calendario marcando el turno como "Ocupado"
 						calendario[diaElegido,horarioElegido] <- "Ocupado";
                         Mostrar "Turno reservado exitosamente.";
+						cantTurno <- cantTurno + 1;
                     Fin Si;
                 Fin Si;
-                cantTurno <- cantTurno + 1;
+                
                 Mostrar "¿Desea reservar otro turno? (1: Sí / 0: No)";
                 Leer opcionMenu;
+				
             Hasta Que opcionMenu = 0;
 			
             // Mostrar lista de turnos ingresados
             Mostrar "Lista de turnos ingresados:";
-            Para i <- 1 Hasta cantTurno-1  Hacer // Restar el turno adicional
+            Para i <- 1 Hasta cantTurno -1  Hacer // se resta uno para no mostrar el espacio vacío
                 Mostrar turnos[i];
             Fin Para;
 		FinSi
 		
-		// Mantener catálogo de productos y servicios
+		// Actualizar precios de servicios
 		Si (opcionMenu == 2) Entonces
-			cantidadProductos <- 1; // se usa como índice de productos[]
+			cantidadServicios <- 3; // Se inicializa con 3 servicios existentes
+			
+			// Lista de servicios predefinidos
+			servicios[1] <- "Corte";
+			servicios[2] <- "Peinado";
+			servicios[3] <- "Manicura";
+			
+			// Precios iniciales de los servicios
+			precios[1] <- 3000;
+			precios[2] <- 5000;
+			precios[3] <- 3500;
+			
 			Repetir
-				Mostrar "Ingrese el nombre del producto o servicio:";
-				Leer productoNuevo;
-				productos[cantidadProductos] <- productoNuevo;
-				cantidadProductos <- cantidadProductos + 1;
-				Mostrar "¿Desea ingresar otro producto o servicio? (1: Sí / 0: No)";
+				Mostrar "Servicios disponibles:";
+				Para i <- 1 Hasta cantidadServicios Hacer
+					Mostrar i, ". ", servicios[i], " - Precio: $", precios[i];
+				Fin Para;
+				
+				Mostrar "¿Desea actualizar los precios? (1: Sí / 0: No)";
 				Leer opcionMenu;
+				Si opcionMenu = 1 Entonces
+					Mostrar "Seleccione el número del servicio que desea actualizar:";
+					Leer servicioActualizar;
+					Mostrar "Ingrese el nuevo precio para ", servicios[servicioActualizar], ":";
+					Leer precios[servicioActualizar];
+					Mostrar "Precio actualizado exitosamente.";
+					Mostrar "¿Desea actualizar otro precio? (1: Sí / 0: No)";
+					Leer opcionMenu;
+				Fin Si;
+				
+				
+				
 			Hasta Que opcionMenu = 0;
 			
-			// Mostrar lista de productos y servicios ingresados
-			Mostrar "Lista de productos y servicios ingresados:";
-			Para i <- 1 Hasta cantidadProductos Hacer
-				Mostrar productos[i];
+			// Se muestra la lista actualizada
+			Mostrar "Lista de servicios y precios actualizados:";
+			Para i <- 1 Hasta cantidadServicios Hacer
+				Mostrar "Servicio: ", servicios[i], " - Precio: $", precios[i];
 			Fin Para;
 		FinSi;
 		
-		// Ver calendario
+		
+		// Ver calendario y disponibilidad de turnos
         Si opcionMenu = 3 Entonces
             Mostrar "Calendario de turnos:";
-            MostrarCalendario(diasSemana, calendario);
+			Para dia <- 1 Hasta 7 Hacer
+				Mostrar diasSemana[dia] , ":";
+				Para turno <- 1 Hasta 2 Hacer
+					Si calendario[dia,turno] = "Disponible" Entonces
+						Mostrar "Turno " , turno , ": Disponible;";
+					SiNo
+						Mostrar "Turno " , turno , ": Ocupado;";
+					Fin Si
+				Fin Para
+			Fin Para
         Fin Si
+		
 	Hasta Que opcionMenu = 4;
+	
 FinAlgoritmo
-
-// Función para mostrar el calendario
-Funcion  MostrarCalendario(diasSemana, calendario)
-Para dia <- 1 Hasta 7 Hacer
-	Mostrar diasSemana[dia] , ":";
-	Para turno <- 1 Hasta 2 Hacer
-		Si calendario[dia,turno] = "Disponible" Entonces
-			Mostrar "Turno " , turno , ": Disponible;";
-		SiNo
-			Mostrar "Turno " , turno , ": Ocupado;";
-		Fin Si
-	Fin Para
-Fin Para
-Fin Funcion
-
