@@ -17,7 +17,20 @@ Algoritmo SistemaReservasSalonBelleza
 	diasSemana[6] <- "Sábado ";
 	diasSemana[7] <- "Domingo ";
 	horarios[1] <- "10:00 AM - 12:00 PM";
-	horarios[2] <- "2:00 PM - 4:00 PM";
+	horarios[2] <- "02:00 PM - 04:00 PM";
+	
+	// se inicializan los array y variables de servicios
+	cantidadServicios <- 3; // Se inicializa con 3 servicios existentes
+	
+	// Lista de servicios predefinidos
+	servicios[1] <- "Corte";
+	servicios[2] <- "Peinado";
+	servicios[3] <- "Manicura";
+	
+	// Precios iniciales de los servicios
+	precios[1] <- 3000;
+	precios[2] <- 5000;
+	precios[3] <- 3500;
 	
 	// Se inicializa el calendario con todos los turnos como "disponible"
 	Para  dia <- 1 Hasta 7 Hacer
@@ -28,29 +41,51 @@ Algoritmo SistemaReservasSalonBelleza
 	
 	cantTurno <- 1; // Cantidad de turnos que reserva el usuario
 	
-    // Menú principal
-    Repetir
-        Escribir "¿Qué desea hacer?";
-        Escribir "1. Reservar turnos";
-        Escribir "2. Listado de precios y servicios";
-		Escribir "3. Ver calendario";
-        Escribir "4. Salir";
-        Leer opcionMenu;
+	Mostrar "//==================================\\";
+	Mostrar "||   ***   Salón de Belleza   ***   ||";
+	Mostrar "||    ~   Sistema de Gestión   ~    ||";
+	Mostrar "\\==================================//";
+	
+	// Menú principal
+	Repetir
+		Mostrar "";
+		Mostrar "+------------------------------------+";
+		Mostrar "|           Menú Principal           |";
+		Mostrar "|====================================|";
+		Mostrar "| [1] Reservar turnos                |";
+		Mostrar "| [2] Listado de precios y servicios |";
+		Mostrar "| [3] Ver calendario                 |";
+		Mostrar "| [4] Salir                          |";
+		Mostrar "+------------------------------------+";
+		Mostrar ""
+		Leer opcionMenu;
 		
         // Reservar turnos
         Si (opcionMenu = 1) Entonces
             Repetir
-                Mostrar "Seleccione el día para el turno:";
-                Para i <- 1 Hasta 7 Hacer
-                    Mostrar i, ". ", diasSemana[i];
-                Fin Para;
-                Leer diaElegido;
+				Mostrar "+------------------------------------+";
+				Mostrar "|   Seleccione el día para el turno  |";
+				Mostrar "+------------------------------------+";
 				
-                Mostrar "Ahora seleccione un horario:";
-                Para i <- 1 Hasta 2 Hacer
-                    Mostrar i, ". ", horarios[i];
-                Fin Para;
-                Leer horarioElegido;
+				Para i <- 1 Hasta 7 Hacer
+					diaTexto <- diasSemana[i] + "                           ";
+					Mostrar "| (", i, ") ", Subcadena(diaTexto, 1, 30) " |"; // Asegura un ancho máximo de 30 caracteres
+				Fin Para;
+				
+				Mostrar "+------------------------------------+";
+				Leer diaElegido;
+				
+				Mostrar "+------------------------------------+";
+				Mostrar "|      Seleccione un horario         |";
+				Mostrar "+------------------------------------+";
+				
+				Para i <- 1 Hasta 2 Hacer
+					horarioTexto <- horarios[i] + "                          ";
+					Mostrar "| (", i, ") ", Subcadena(horarioTexto, 1, 30), " |"; // Asegura un ancho máximo de 30 caracteres
+				Fin Para;
+				
+				Mostrar "+------------------------------------+";
+				Leer horarioElegido;
 				
                 turnoElegido <- concatenar(concatenar(diasSemana[diaElegido], " "), horarios[horarioElegido]);
 				
@@ -59,7 +94,7 @@ Algoritmo SistemaReservasSalonBelleza
                     turnos[cantTurno] <- turnoElegido; // Se almacena el turno seleccionado en el arreglo turnos
 					// Actualiza el calendario marcando el turno como "Ocupado"
 					calendario[diaElegido,horarioElegido] <- "Ocupado";
-                    Mostrar "Turno reservado exitosamente.";
+                    Mostrar " *** Turno reservado exitosamente. ***";
 					cantTurno <- cantTurno + 1;
                 SiNo // del turno 2 en adelante...
                     Existe <- Falso; // Verdadero si encuentra un turno duplicado
@@ -70,87 +105,115 @@ Algoritmo SistemaReservasSalonBelleza
                     Fin Para;
 					
                     Si Existe Entonces
-                        Mostrar "El turno seleccionado ya está ocupado. Por favor, elija otro.";
+                        Mostrar "|# El turno elegido ya está ocupado #|";
+						Mostrar "|#     Por favor, elija otro.       #|";
                     SiNo
 						// Si NO existe un turno duplicado, se almacena en el arreglo turnos
                         turnos[cantTurno] <- turnoElegido;
 						// Actualiza el calendario marcando el turno como "Ocupado"
 						calendario[diaElegido,horarioElegido] <- "Ocupado";
-                        Mostrar "Turno reservado exitosamente.";
+                        Mostrar " *** Turno reservado exitosamente. ***";
 						cantTurno <- cantTurno + 1;
                     Fin Si;
                 Fin Si;
                 
-                Mostrar "¿Desea reservar otro turno? (1: Sí / 0: No)";
+				Mostrar "                 ~~~                  ";
+				Mostrar "|#    ¿Desea reservar otro turno?   #|";
+				Mostrar "|#        (1: Sí / 0: No)           #|";				
+				Mostrar "                 ~~~                  ";
                 Leer opcionMenu;
-				
+				Mostrar "                 ~~~                  ";
             Hasta Que opcionMenu = 0;
 			
-            // Mostrar lista de turnos ingresados
-            Mostrar "Lista de turnos ingresados:";
-            Para i <- 1 Hasta cantTurno -1  Hacer // se resta uno para no mostrar el espacio vacío
-                Mostrar turnos[i];
-            Fin Para;
+			// Mostrar lista de turnos ingresados
+			Mostrar "+------------------------------------+";
+			Mostrar "||    Lista de turnos ingresados    ||";
+			Mostrar "+------------------------------------+";
+			
+			Para i <- 1 Hasta cantTurno - 1 Hacer // se resta uno para no mostrar el espacio vacío
+				Mostrar "| ", turnos[i], "    ~";
+			Fin Para;
+			
+			Mostrar "+------------------------------------+";
+			Mostrar "                 ~~~                  ";
 		FinSi
+		
 		
 		// Actualizar precios de servicios
 		Si (opcionMenu == 2) Entonces
-			cantidadServicios <- 3; // Se inicializa con 3 servicios existentes
-			
-			// Lista de servicios predefinidos
-			servicios[1] <- "Corte";
-			servicios[2] <- "Peinado";
-			servicios[3] <- "Manicura";
-			
-			// Precios iniciales de los servicios
-			precios[1] <- 3000;
-			precios[2] <- 5000;
-			precios[3] <- 3500;
 			
 			Repetir
-				Mostrar "Servicios disponibles:";
+				Mostrar "+------------------------------------+";
+				Mostrar "|      Servicios Disponibles         |";
+				Mostrar "+------------------------------------+";
+				
 				Para i <- 1 Hasta cantidadServicios Hacer
-					Mostrar i, ". ", servicios[i], " - Precio: $", precios[i];
+					Mostrar "| [", i, "] ", Subcadena(servicios[i] + "                              ", 1, 17), " | $", precios[i], " |";
 				Fin Para;
 				
-				Mostrar "¿Desea actualizar los precios? (1: Sí / 0: No)";
+				Mostrar "+------------------------------------+";
+				Mostrar "                 ~~~                  ";
+				Mostrar "|-  ¿Desea actualizar los precios?  -|";
+				Mostrar "|-        (1: Sí / 0: No)           -|";
+				Mostrar "                 ~~~                  ";
 				Leer opcionMenu;
 				Si opcionMenu = 1 Entonces
-					Mostrar "Seleccione el número del servicio que desea actualizar:";
+					Mostrar "                 ~~~                  ";
+					Mostrar "|-  Seleccione el número del        -|";
+					Mostrar "|-  servicio que desea actualizar:  -|";
+					Mostrar "                 ~~~                  ";
 					Leer servicioActualizar;
-					Mostrar "Ingrese el nuevo precio para ", servicios[servicioActualizar], ":";
+					Mostrar "                 ~~~                  ";
+					Mostrar "|-   Ingrese el nuevo precio para   -|";
+					Mostrar "             * ", servicios[servicioActualizar], " *   ";
+					Mostrar "                 ~~~                  ";
 					Leer precios[servicioActualizar];
-					Mostrar "Precio actualizado exitosamente.";
-					Mostrar "¿Desea actualizar otro precio? (1: Sí / 0: No)";
+					Mostrar "                 ~~~                  ";
+					Mostrar "| * Precio actualizado con éxito. *  |";
+					Mostrar "                 ~~~                  ";
+					Mostrar "                 ~~~                  ";
+					Mostrar "|-  ¿Desea actualizar otro precio?  -|";
+					Mostrar "|-        (1: Sí / 0: No)           -|";
+					Mostrar "                 ~~~                  ";
 					Leer opcionMenu;
 				Fin Si;
-				
 				
 				
 			Hasta Que opcionMenu = 0;
 			
 			// Se muestra la lista actualizada
-			Mostrar "Lista de servicios y precios actualizados:";
+			Mostrar "+------------------------------------+";
+			Mostrar "||   Lista de precios actualizada   ||";
+			Mostrar "+------------------------------------+";
 			Para i <- 1 Hasta cantidadServicios Hacer
-				Mostrar "Servicio: ", servicios[i], " - Precio: $", precios[i];
+				Mostrar "| (", i, ") ", Subcadena(servicios[i] + "                              ", 1,17), " | $", precios[i], " |";
 			Fin Para;
+			Mostrar "+------------------------------------+";
+			Mostrar "                 ~~~                  ";
 		FinSi;
 		
 		
-		// Ver calendario y disponibilidad de turnos
-        Si opcionMenu = 3 Entonces
-            Mostrar "Calendario de turnos:";
-			Para dia <- 1 Hasta 7 Hacer
-				Mostrar diasSemana[dia] , ":";
-				Para turno <- 1 Hasta 2 Hacer
-					Si calendario[dia,turno] = "Disponible" Entonces
-						Mostrar "Turno " , turno , ": Disponible;";
-					SiNo
-						Mostrar "Turno " , turno , ": Ocupado;";
-					Fin Si
-				Fin Para
-			Fin Para
-        Fin Si
+		// Calendario de turnos
+		Si opcionMenu = 3 Entonces
+			Repetir
+				Mostrar "+------------------------------------+";
+				Mostrar "|        Calendario de turnos        |";
+				Mostrar "+------------------------------------+";
+				
+				Para dia <- 1 Hasta 7 Hacer
+					Mostrar "+------------------------------------+";
+					diaTexto <- diasSemana[dia] + "                       ";
+					Mostrar "| Día: ", Subcadena(diaTexto, 1, 29), " |";
+					Mostrar "| T1: ", calendario[dia, 1], " | T2: ", calendario[dia, 2], " |";
+					Mostrar "+------------------------------------+";
+				FinPara
+				
+				Mostrar "¿Desea volver al Menú Principal? (1: Sí / 0: No)";
+				Leer opcionMenu;
+			Hasta Que opcionMenu = 1;
+			
+			Mostrar "                 ~~~                  ";		
+		FinSi
 		
 	Hasta Que opcionMenu = 4;
 	
